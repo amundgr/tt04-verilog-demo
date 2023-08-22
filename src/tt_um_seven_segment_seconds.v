@@ -14,13 +14,14 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     wire reset = ! rst_n;
     reg [(8*10-1):0] test_reg; // 10 8-bit registers
 
+    // use bidirectionals as outputs
+    assign uio_oe = 8'b11111111;
+    assign uio_out = 8'b00000000;
     /*
     wire [6:0] led_out;
     assign uo_out[6:0] = led_out;
     assign uo_out[7] = 1'b0;
 
-    // use bidirectionals as outputs
-    assign uio_oe = 8'b11111111;
 
     // put bottom 8 bits of second counter out on the bidirectional gpio
     assign uio_out = second_counter[7:0];
