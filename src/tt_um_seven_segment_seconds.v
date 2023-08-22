@@ -18,7 +18,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
 
     wire reset = ! rst_n;
 
-    reg [ BUFFER_SIZE - 1 : 0 ] channles [ 0 : NUMBER_OF_CHANNELS-1 ]
+    reg [ BUFFER_SIZE - 1 : 0 ] channles [ 0 : NUMBER_OF_CHANNELS-1 ];
 
 
     reg [(8*10-1):0] test_reg; // 10 8-bit registers
