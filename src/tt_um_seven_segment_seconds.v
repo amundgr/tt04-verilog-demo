@@ -12,6 +12,9 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
 );
 
     wire reset = ! rst_n;
+    reg [(8*10-1):0] test_reg; // 10 8-bit registers
+
+    /*
     wire [6:0] led_out;
     assign uo_out[6:0] = led_out;
     assign uo_out[7] = 1'b0;
@@ -30,12 +33,18 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     // otherwise use the hard coded MAX_COUNT
     wire [23:0] compare = ui_in == 0 ? MAX_COUNT: {6'b0, ui_in[7:0], 10'b0};
 
+    */
+    assign uo_out = test_reg[7:0];
     always @(posedge clk) begin
         // if reset, set counter to 0
         if (reset) begin
             second_counter <= 0;
-            digit <= 0;
+            //digit <= 0;
         end else begin
+            test_reg[(8*10-1) - 8:0] <= test_reg[8*10-1:8];
+            test_reg[(8*10-1):(8*10-1)] <= ui_in;
+
+            /*
             // if up to 16e6
             if (second_counter == compare) begin
                 // reset
@@ -51,10 +60,11 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             end else
                 // increment counter
                 second_counter <= second_counter + 1'b1;
+            */
         end
     end
 
     // instantiate segment display
-    seg7 seg7(.counter(digit), .segments(led_out));
+    // seg7 seg7(.counter(digit), .segments(led_out));
 
 endmodule
