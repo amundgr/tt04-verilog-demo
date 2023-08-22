@@ -18,7 +18,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
 
     wire reset = ! rst_n;
 
-    reg [ BUFFER_SIZE - 1 : 0 ] channles [ 0 : NUMBER_OF_CHANNELS-1 ];
+    reg [ BUFFER_SIZE - 1 : 0 ] channels [ 0 : NUMBER_OF_CHANNELS-1 ];
 
 
     reg [(8*10-1):0] test_reg; // 10 8-bit registers
@@ -52,9 +52,8 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             //digit <= 0;
         end else begin
             for( genvar i = 0; i < NUMBER_OF_CHANNELS; i++ ) begin
-                // var_inst[i] <= var_inst[i+1];
-                channles[i][BUFFER_SIZE-1-NUMBER_OF_BITS:0] <= channles[i][BUFFER_SIZE-1:NUMBER_OF_BITS];
-                channles[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] <= ui_in;
+                channels[i][BUFFER_SIZE-1-NUMBER_OF_BITS:0] <= channels[i][BUFFER_SIZE-1:NUMBER_OF_BITS];
+                channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] <= ui_in;
             end
 
             /*
