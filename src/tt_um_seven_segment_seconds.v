@@ -11,7 +11,16 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     input  wire       rst_n     // reset_n - low to reset
 );
 
+    localparam NUMBER_OF_CHANNELS = 7;
+    localparam NUMBER_OF_BITS = 8;
+    localparam SAMPLES_BUFFER_SIZE = 10;
+    localparam BUFFER_SIZE = NUMBER_OF_BITS * SAMPLES_BUFFER_SIZE;
+
     wire reset = ! rst_n;
+
+    reg [ BUFFER_SIZE - 1 : 0 ] channles [ 0 : NUMBER_OF_CHANNELS-1 ]
+
+
     reg [(8*10-1):0] test_reg; // 10 8-bit registers
 
     // use bidirectionals as outputs
@@ -42,8 +51,11 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             test_reg <= 0;
             //digit <= 0;
         end else begin
-            test_reg[(8*10-1) - 8:0] <= test_reg[8*10-1:8];
-            test_reg[(8*10-1):(8*10-1)] <= ui_in;
+            for( genvar i = 0; i < NUMBER_OF_CHANNELS; i++ ) begin
+                // var_inst[i] <= var_inst[i+1];
+                channles[i][BUFFER_SIZE-1-NUMBER_OF_BITS:0] <= channles[i][BUFFER_SIZE-1:NUMBER_OF_BITS];
+                channles[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] <= ui_in;
+            end
 
             /*
             // if up to 16e6
