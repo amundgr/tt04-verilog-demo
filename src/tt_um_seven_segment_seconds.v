@@ -34,7 +34,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             test_reg <= 0;
             //digit <= 0;
         end else begin
-            for( genvar i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
+            for( i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
                 reg [BUFFER_SIZE-1:0] updated_value;
                 updated_value = channels[i] >> NUMBER_OF_BITS;
                 updated_value[BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
