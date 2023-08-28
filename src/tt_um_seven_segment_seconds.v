@@ -11,7 +11,7 @@ module tt_um_seven_segment_seconds (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-    localparam NUMBER_OF_CHANNELS = 7;
+    localparam NUMBER_OF_CHANNELS = 8;
     localparam NUMBER_OF_BITS = 8;
     localparam SAMPLES_BUFFER_SIZE = 10;
     localparam BUFFER_SIZE = NUMBER_OF_BITS * SAMPLES_BUFFER_SIZE;
