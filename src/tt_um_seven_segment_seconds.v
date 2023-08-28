@@ -25,7 +25,6 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uio_out = 8'b00000000;
 
     integer i;
-    assign uo_out = test_reg[7:0];
     always @(posedge clk) begin
         // if reset, set counter to 0
         if (reset) begin
