@@ -1,6 +1,6 @@
 `default_nettype none
 
-module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
+module tt_um_seven_segment_seconds (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
@@ -24,21 +24,23 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uio_oe = 8'b11111111;
     assign uio_out = 8'b00000000;
 
-    reg bit_counter = 0;
+    for ( genvar i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
+        assign uio_out[i] = channels[i][0];
+    end
 
-    integer i;
     always @(posedge clk) begin
         // if reset, set counter to 0
         if (reset) begin
             //digit <= 0;
         end else begin
-            for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
-                channels[i] <= {channels[i][BUFFER_SIZE-2:0], uio_in[i]};
-                uo_out[i] <= channels[i][0];
-                //channels[i][:] = channels[i] >> NUMBER_OF_BITS;
-                //channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
+            if (ena) begin
+                for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
+                    channels[i] <= {channels[i][BUFFER_SIZE-2:0], uio_in[i]};
+                    
+                    //channels[i][:] = channels[i] >> NUMBER_OF_BITS;
+                    //channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
+                end
             end
-
         end
     end
 
