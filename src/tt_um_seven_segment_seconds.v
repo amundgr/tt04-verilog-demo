@@ -28,7 +28,6 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     always @(posedge clk) begin
         // if reset, set counter to 0
         if (reset) begin
-            test_reg <= 0;
             //digit <= 0;
         end else begin
             for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
