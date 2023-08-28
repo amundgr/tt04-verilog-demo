@@ -32,7 +32,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             //digit <= 0;
         end else begin
             for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
-                channels[i] <= {channels[i][BUFFER_SIZE-2:0], uio_in[i]}
+                channels[i] <= {channels[i][BUFFER_SIZE-2:0], uio_in[i]};
                 //channels[i][:] = channels[i] >> NUMBER_OF_BITS;
                 //channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
             end
