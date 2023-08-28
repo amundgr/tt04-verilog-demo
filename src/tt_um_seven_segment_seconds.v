@@ -11,7 +11,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-    localparam NUMBER_OF_CHANNELS = 14;
+    localparam NUMBER_OF_CHANNELS = 7;
     localparam NUMBER_OF_BITS = 8;
     localparam SAMPLES_BUFFER_SIZE = 10;
     localparam BUFFER_SIZE = NUMBER_OF_BITS * SAMPLES_BUFFER_SIZE;
@@ -32,8 +32,9 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
             //digit <= 0;
         end else begin
             for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
-                channels[i][:] = channels[i][:] >> NUMBER_OF_BITS;
-                channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
+                channels[i] <= {channels[i][BUFFER_SIZE-2:0], uio_in[i]}
+                //channels[i][:] = channels[i] >> NUMBER_OF_BITS;
+                //channels[i][BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
             end
 
         end
