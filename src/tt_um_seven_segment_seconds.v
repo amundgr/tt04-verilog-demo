@@ -20,8 +20,6 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
 
     reg [ BUFFER_SIZE - 1 : 0 ] channels [ 0 : NUMBER_OF_CHANNELS-1 ];
 
-    reg [(8*10-1):0] test_reg; // 10 8-bit registers
-
     // use bidirectionals as outputs
     assign uio_oe = 8'b11111111;
     assign uio_out = 8'b00000000;
@@ -36,12 +34,7 @@ module tt_um_seven_segment_seconds #( parameter MAX_COUNT = 24'd10_000_000 ) (
         end else begin
             for( int i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
                 channels[i] <= channels[i] >> NUMBER_OF_BITS;
-                updated_value[BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
-                /*
-                reg [BUFFER_SIZE-1:0] updated_value;
-                updated_value = channels[i] >> NUMBER_OF_BITS;
-                channels[i] <= updated_value;
-                */
+                channels[BUFFER_SIZE-1:BUFFER_SIZE-NUMBER_OF_BITS] = ui_in;
             end
 
         end
