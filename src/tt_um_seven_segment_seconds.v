@@ -138,7 +138,6 @@ i2s_to_pcm test_design_i2s(
 
 channel_buffer test_design_channel_buffer(
     .clk(clk),
-    .reset(ws_clk),
     .data_in(uio_out),
     .read_index(read_index),
     .data_out(data_output)
