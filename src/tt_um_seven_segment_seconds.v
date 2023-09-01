@@ -25,7 +25,7 @@ assign data_right_output = data_right;
 
 reg [1:0] state = not_sampling;
 reg prev_ws = 0;
-reg [2:0] bit_counter = 0;
+reg [$clog2(NUMBER_OF_BITS):0] bit_counter = 0;
 
 
 always @(posedge clk) begin
@@ -43,10 +43,12 @@ always @(posedge clk) begin
                     bit_counter <= 0;
                 end else begin
                     if (!ws) begin
-                        data_left <= data_left << 1 | data_in;
+                        data_left <= data_left << 1;
+                        data_left[0] <= data_in;
                     end 
                     else begin 
-                        data_right <= data_right << 1 | data_in;
+                        data_right <= data_right << 1;
+                        data_right[0] <= data_in;
                     end
                     bit_counter <= bit_counter + 1;
                 end
@@ -82,7 +84,11 @@ module channel_buffer (clk, data_in, read_index, data_out);
     assign data_out = data[read_index];
 
     always @(posedge clk) begin
-        data <= {data[SAMPLES_BUFFER_SIZE-2:0], data_in};
+        for (int i = SAMPLES_BUFFER_SIZE-1; i > 0; i = i - 1) begin
+            data[i] <= data[i-1];
+        end
+        data[0] <= data_in;
+        //data <= {data[SAMPLES_BUFFER_SIZE-2:0], data_in};
     end
 
 endmodule
@@ -125,7 +131,7 @@ end
 // wire [7:0] data_right;
 
 reg [7:0] data_output = 0;
-reg [7:0] read_index = 0;
+reg [$clog2(SAMPLES_BUFFER_SIZE):0] read_index = 0;
 
 i2s_to_pcm test_design_i2s(
     .clk(clk),
@@ -137,7 +143,7 @@ i2s_to_pcm test_design_i2s(
 );
 
 channel_buffer test_design_channel_buffer(
-    .clk(clk),
+    .clk(ws_clk),
     .data_in(uio_out),
     .read_index(read_index),
     .data_out(data_output)
