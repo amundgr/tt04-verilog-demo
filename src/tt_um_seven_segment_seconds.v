@@ -1,9 +1,10 @@
 `default_nettype none
 
-module tt_um_seven_segment_seconds(clk, ws, data_in, reset, data_left_output, data_right_output);
+module tt_um_seven_segment_seconds(clk, ws, data_in, ena, reset, data_left_output, data_right_output);
 
     parameter NUMBER_OF_BITS = 8;
 
+    input wire ena;
     input wire clk;
     input wire ws;
     input wire data_in;
