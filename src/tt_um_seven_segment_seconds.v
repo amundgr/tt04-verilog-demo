@@ -127,10 +127,15 @@ always @ (posedge clk) begin
     end
 end
 
-// wire [7:0] data_left;
-// wire [7:0] data_right;
+wire [7:0] data_left;
+wire [7:0] data_right;
 
-reg [7:0] data_output = 0;
+wire [7:0] data_output_1;
+wire [7:0] data_output_2;
+
+reg [7:0] data_output;
+
+
 reg [$clog2(SAMPLES_BUFFER_SIZE):0] read_index = 0;
 
 i2s_to_pcm test_design_i2s(
@@ -138,15 +143,22 @@ i2s_to_pcm test_design_i2s(
     .ws(ws_clk),
     .data_in(ui_in[0]),
     .reset(reset),
-    .data_left_output(uio_out),
-    .data_right_output(uo_out)
+    .data_left_output(data_left),
+    .data_right_output(data_right)
 );
 
-channel_buffer test_design_channel_buffer(
+channel_buffer test_design_channel_buffer_1(
     .clk(ws_clk),
-    .data_in(uio_out),
+    .data_in(data_left),
     .read_index(read_index),
-    .data_out(data_output)
+    .data_out(data_output_1)
+);
+
+channel_buffer test_design_channel_buffer_2(
+    .clk(ws_clk),
+    .data_in(data_right),
+    .read_index(read_index),
+    .data_out(data_output_2)
 );
 
 always @ (posedge ws_clk) begin
@@ -154,6 +166,7 @@ always @ (posedge ws_clk) begin
         read_index <= 0;
     end else begin
         read_index <= read_index + 3;
+        data_output <= data_output_1 + data_output_2;
     end
 end
 
