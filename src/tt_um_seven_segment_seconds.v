@@ -1,10 +1,9 @@
 `default_nettype none
 
-module tt_um_seven_segment_seconds(clk, ws, data_in, ena, reset, data_left_output, data_right_output);
+module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
 
     parameter NUMBER_OF_BITS = 8;
 
-    input wire ena;
     input wire clk;
     input wire ws;
     input wire data_in;
@@ -88,7 +87,7 @@ module channel_buffer (clk, data_in, read_index, data_out);
 
 endmodule
 
-module tt04_design (
+module tt_um_seven_segment_seconds (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
