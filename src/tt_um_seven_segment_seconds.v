@@ -1,6 +1,6 @@
 `default_nettype none
 
-module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
+module tt_um_seven_segment_seconds(clk, ws, data_in, reset, data_left_output, data_right_output);
 
     parameter NUMBER_OF_BITS = 8;
 
