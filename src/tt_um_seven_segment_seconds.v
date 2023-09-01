@@ -73,7 +73,7 @@ module channel_buffer (clk, data_in, read_index, data_out);
     parameter SAMPLES_BUFFER_SIZE = 10;
 
     input wire clk;
-    input wire [$clog2(NUMBER_OF_BITS)-1:0] read_index;
+    input wire [$clog2(NUMBER_OF_BITS):0] read_index;
     input wire [NUMBER_OF_BITS-1:0] data_in;
     output wire [NUMBER_OF_BITS-1:0] data_out;
     
