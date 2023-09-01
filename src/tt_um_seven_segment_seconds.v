@@ -135,7 +135,7 @@ wire [7:0] data_output_2;
 
 reg [7:0] data_output;
 
-assign output = data_output;
+assign uo_out = data_output;
 
 reg [$clog2(SAMPLES_BUFFER_SIZE):0] read_index = 0;
 
