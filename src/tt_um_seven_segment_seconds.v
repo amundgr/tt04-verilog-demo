@@ -111,6 +111,11 @@ localparam BUFFER_SIZE = NUMBER_OF_BITS * SAMPLES_BUFFER_SIZE;
 
 wire reset = ! rst_n;
 
+reg [7:0] dummy_1 = 0;
+reg [7:0] dummy_2 = 0;
+
+assign uio_out = dummy_1;
+assign uio_oe = dummy_2;
 
 reg ws_clk = 0;
 reg [4:0] ws_counter = 0;
