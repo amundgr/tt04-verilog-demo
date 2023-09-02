@@ -119,7 +119,7 @@ module tt_um_beamformer (
     assign uio_out[7:1] = dummy_byte_zero[7:1];
     assign uio_oe = dummy_byte_zero;
 
-    reg ws_clk = 0;
+    // reg ws_clk = 0;
     reg [4:0] ws_counter = 0;
     assign uo_out[1] = ws_clk;
 
