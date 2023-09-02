@@ -156,7 +156,7 @@ module tt_um_beamformer (
 
     assign uo_out = data_output;
 
-    reg [$clog2(BUFFER_SIZE):0] read_index [2:0] = 0; // Set hard to 3 as 8 is max
+    reg [$clog2(BUFFER_SIZE):0] read_index [2:0]; // Set hard to 3 as 8 is max
 
     i2s_to_pcm test_design_i2s(
         .clk(clk),

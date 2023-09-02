@@ -1,4 +1,3 @@
-// parameters.v
 `ifndef PARAMETERS_V
 `define PARAMETERS_V
 
