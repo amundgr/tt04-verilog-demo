@@ -127,8 +127,9 @@ module tt_um_beamformer (
     always @ (negedge clk) begin
         if (reset) begin
             ws_counter <= 0;
+        end else begin
+            ws_counter <= ws_counter + 1;
         end
-        ws_counter <= ws_counter + 1;
     end
 
     wire delay_data;
@@ -139,18 +140,14 @@ module tt_um_beamformer (
     assign delay_data = uio_in[3];
     assign delay_data_clock = uio_in[4];
 
+    reg [7:0] data_output;
     assign uo_out[0] = data_output[7];
-
-
+    
     wire [7:0] data_left;
     wire [7:0] data_right;
-
+    
     wire [7:0] data_output_1;
     wire [7:0] data_output_2;
-
-    reg [7:0] data_output;
-
-    assign uo_out = data_output;
 
     reg [$clog2(BUFFER_SIZE):0] read_index [2:0]; // Set hard to 3 as 8 is max
 
