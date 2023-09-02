@@ -1,4 +1,5 @@
 `default_nettype none
+`include "parameters.v"
 
 module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
 
@@ -110,11 +111,6 @@ module tt_um_beamformer (
         uo_out[0] - data output from beamformer
         uo_out[1] - ws output from beamformer
     */
-
-
-    parameter NUMBER_OF_CHANNELS = 1;
-    parameter NUMBER_OF_BITS = 8;
-    parameter BUFFER_SIZE = 10;
 
     wire reset = ! rst_n;
 
