@@ -2,8 +2,6 @@
 
 module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
 
-    parameter NUMBER_OF_BITS = 8;
-
     input wire clk;
     input wire ws;
     input wire data_in;
@@ -71,24 +69,20 @@ endmodule
 
 module channel_buffer (clk, data_in, read_index, data_out);
 
-    parameter NUMBER_OF_BITS = 8;
-    parameter SAMPLES_BUFFER_SIZE = 10;
-
     input wire clk;
-    input wire [$clog2(SAMPLES_BUFFER_SIZE):0] read_index;
+    input wire [$clog2(BUFFER_SIZE):0] read_index;
     input wire [NUMBER_OF_BITS-1:0] data_in;
     output wire [NUMBER_OF_BITS-1:0] data_out;
     
-    reg [NUMBER_OF_BITS-1:0] data [SAMPLES_BUFFER_SIZE-1:0];
+    reg [NUMBER_OF_BITS-1:0] data [BUFFER_SIZE-1:0];
 
     assign data_out = data[read_index];
 
     always @(posedge clk) begin
-        for (int i = SAMPLES_BUFFER_SIZE-1; i > 0; i = i - 1) begin
+        for (int i = BUFFER_SIZE-1; i > 0; i = i - 1) begin
             data[i] <= data[i-1];
         end
         data[0] <= data_in;
-        //data <= {data[SAMPLES_BUFFER_SIZE-2:0], data_in};
     end
 
 endmodule
@@ -104,10 +98,9 @@ module tt_um_beamformer (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-localparam NUMBER_OF_CHANNELS = 8;
+localparam NUMBER_OF_CHANNELS = 1;
 localparam NUMBER_OF_BITS = 8;
-localparam SAMPLES_BUFFER_SIZE = 10;
-localparam BUFFER_SIZE = NUMBER_OF_BITS * SAMPLES_BUFFER_SIZE;
+localparam BUFFER_SIZE = 10;
 
 wire reset = ! rst_n;
 
@@ -175,43 +168,3 @@ always @ (posedge ws_clk) begin
         data_output <= data_output_1[6:0] + data_output_2[6:0];
     end
 end
-
-
-
-/*
-reg [ NUMBER_OF_BITS - 1 : 0 ] channels [ 0 : NUMBER_OF_CHANNELS-1 ][SAMPLES_BUFFER_SIZE -1 : 0];
-
-// use bidirectionals as outputs
-assign uio_out = 8'b00000000;
-
-generate
-    genvar i;
-    for ( i = 0; i < NUMBER_OF_CHANNELS; i = i + 1 ) begin
-        assign uo_out[i] = channels[i][SAMPLES_BUFFER_SIZE-1];
-    end 
-endgenerate
-
-integer j;
-integer k;
-
-
-
-
-always @(posedge ws_clk) begin
-    // if reset, set counter to 0
-    if (reset) begin
-        // digit <= 0;
-    end else begin
-        if (ena) begin
-            for( j = 0; j < NUMBER_OF_CHANNELS; j = j + 1 ) begin
-                for( k = SAMPLES_BUFFER_SIZE-1; k > 0; k = k - 1 ) begin
-                    channels[j][k] <= channels[j][k-1];
-                end
-                channels[j][0] <= ui_in;
-                // channels[j] = channels[j][SAMPLES_BUFFER_SIZE-2:0] >> 1 // {channels[j][SAMPLES_BUFFER_SIZE-2:0], ui_in[j]};
-            end
-        end
-    end
-end
-*/
-endmodule
