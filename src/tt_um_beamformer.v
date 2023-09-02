@@ -108,12 +108,13 @@ module tt_um_beamformer (
 
     # Use same as provided clock to get data out
     uo_out[0] - data output from beamformer
+    uo_out[1] - ws output from beamformer
 */
 
 
-localparam NUMBER_OF_CHANNELS = 1;
-localparam NUMBER_OF_BITS = 8;
-localparam BUFFER_SIZE = 10;
+parameter NUMBER_OF_CHANNELS = 1;
+parameter NUMBER_OF_BITS = 8;
+parameter BUFFER_SIZE = 10;
 
 wire reset = ! rst_n;
 
@@ -124,6 +125,7 @@ assign uio_oe = dummy_byte_zero;
 
 reg ws_clk = 0;
 reg [4:0] ws_counter = 0;
+assign uo_out[1] = ws_clk;
 
 always @ (negedge clk) begin
     if (reset) begin
@@ -145,7 +147,7 @@ assign delay_data_register_select = uio_in[2:0];
 assign delay_data = uio_in[3];
 assign delay_data_clock = uio_in[4];
 
-assign uo_out[0] = data_output[0];
+assign uo_out[0] = data_output[7];
 
 
 wire [7:0] data_left;
@@ -188,7 +190,7 @@ always @ (posedge delay_data_clock) begin
 end
 
 always @ (posedge clk) begin
-    data_output <= data_output >> 1;
+    data_output <= data_output << 1;
 end
 
 endmodule
