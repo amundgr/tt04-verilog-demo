@@ -114,10 +114,11 @@ module tt_um_beamformer (
 
     wire reset = ! rst_n;
 
-    reg [7:0] dummy_byte_zero = 0;
+    // reg [7:0] dummy_byte_zero = 0;
 
-    assign uio_out[7:1] = dummy_byte_zero[7:1];
-    assign uio_oe = dummy_byte_zero;
+    assign uo_out[7:2] = 0;// dummy_byte_zero[7:2];
+    assign uio_out = 0;// dummy_byte_zero[7:1];
+    assign uio_oe = 0;// dummy_byte_zero;
 
     wire ws_clk;
     reg [4:0] ws_counter = 0;
