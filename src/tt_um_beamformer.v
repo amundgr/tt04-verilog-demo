@@ -119,20 +119,16 @@ module tt_um_beamformer (
     assign uio_out[7:1] = dummy_byte_zero[7:1];
     assign uio_oe = dummy_byte_zero;
 
-    // reg ws_clk = 0;
+    wire ws_clk;
     reg [4:0] ws_counter = 0;
+    assign ws_clk = ws_counter[4];
     assign uo_out[1] = ws_clk;
 
     always @ (negedge clk) begin
         if (reset) begin
-            ws_clk <= 0;
             ws_counter <= 0;
-        end else begin
-            if (ws_counter == 31) begin
-                ws_clk <= ~ws_clk;
-            end
-            ws_counter <= ws_counter + 1;
         end
+        ws_counter <= ws_counter + 1;
     end
 
     wire delay_data;
