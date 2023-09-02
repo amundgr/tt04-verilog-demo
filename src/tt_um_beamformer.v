@@ -98,22 +98,34 @@ module tt_um_beamformer (
     input  wire       rst_n     // reset_n - low to reset
 );
 
+/*
+    ui_in - data inputs to the i2s modules
+
+    # Probably safe to set all uio_oe to input (0=input)
+    uio_in[2:0] - delay register enable inputs beamformer
+    uio_in[3] - data input for delay registers
+    uio_in[4] - clock input for delay registers
+
+    # Use same as provided clock to get data out
+    uo_out[0] - data output from beamformer
+*/
+
+
 localparam NUMBER_OF_CHANNELS = 1;
 localparam NUMBER_OF_BITS = 8;
 localparam BUFFER_SIZE = 10;
 
 wire reset = ! rst_n;
 
-reg [7:0] dummy_1 = 0;
-reg [7:0] dummy_2 = 0;
+reg [7:0] dummy_byte_zero = 0;
 
-assign uio_out = dummy_1;
-assign uio_oe = dummy_2;
+assign uio_out[7:1] = dummy_byte_zero[7:1];
+assign uio_oe = dummy_byte_zero;
 
 reg ws_clk = 0;
 reg [4:0] ws_counter = 0;
 
-always @ (posedge clk) begin
+always @ (negedge clk) begin
     if (reset) begin
         ws_clk <= 0;
         ws_counter <= 0;
@@ -125,6 +137,17 @@ always @ (posedge clk) begin
     end
 end
 
+wire delay_data;
+wire delay_data_clock;
+wire [2:0] delay_data_register_select;
+
+assign delay_data_register_select = uio_in[2:0];
+assign delay_data = uio_in[3];
+assign delay_data_clock = uio_in[4];
+
+assign uo_out[0] = data_output[0];
+
+
 wire [7:0] data_left;
 wire [7:0] data_right;
 
@@ -135,7 +158,7 @@ reg [7:0] data_output;
 
 assign uo_out = data_output;
 
-reg [$clog2(SAMPLES_BUFFER_SIZE):0] read_index = 0;
+reg [$clog2(SAMPLES_BUFFER_SIZE):0] read_index [2:0] = 0; // Set hard to 3 as 8 is max
 
 i2s_to_pcm test_design_i2s(
     .clk(clk),
@@ -149,23 +172,23 @@ i2s_to_pcm test_design_i2s(
 channel_buffer test_design_channel_buffer_1(
     .clk(ws_clk),
     .data_in(data_left),
-    .read_index(read_index),
+    .read_index(read_index[0]),
     .data_out(data_output_1)
 );
 
 channel_buffer test_design_channel_buffer_2(
     .clk(ws_clk),
     .data_in(data_right),
-    .read_index(read_index),
+    .read_index(read_index[1]),
     .data_out(data_output_2)
 );
 
-always @ (posedge ws_clk) begin
-    if (reset) begin
-        read_index <= 0;
-    end else begin
-        read_index <= read_index + 3;
-        data_output <= data_output_1[6:0] + data_output_2[6:0];
-    end
+always @ (posedge delay_data_clock) begin
+    read_index[delay_data_register_select] <= (read_index[delay_data_register_select] << 1 ) | delay_data;
 end
+
+always @ (posedge clk) begin
+    data_output <= data_output >> 1;
+end
+
 endmodule
