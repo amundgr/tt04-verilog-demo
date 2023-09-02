@@ -168,3 +168,4 @@ always @ (posedge ws_clk) begin
         data_output <= data_output_1[6:0] + data_output_2[6:0];
     end
 end
+endmodule
