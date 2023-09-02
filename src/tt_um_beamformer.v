@@ -27,6 +27,26 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
     reg [$clog2(NUMBER_OF_BITS):0] bit_counter = 0;
 
     // TODO: Make simpler and way more stupid. 
+    /*
+    always @(clk) begin
+        if (bit_counter != NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
+            if (bit_counter != 0) begin
+                if (!ws) begin
+                    data_left <= data_left << 1;
+                    data_left[0] <= data_in;
+                end else begin 
+                    data_right <= data_right << 1;
+                    data_right[0] <= data_in;
+                end
+            end
+            bit_counter <= bit_counter + 1;
+        end
+    end
+    */
+    always @(edge ws_clk) begin
+        bit_counter <= 0;
+    end
+
     always @(posedge clk) begin
         if (reset) begin
             prev_ws <= 0;
@@ -116,6 +136,7 @@ module tt_um_beamformer (
 
     // reg [7:0] dummy_byte_zero = 0;
 
+    // Might want to set to Z?
     assign uo_out[7:2] = 0;// dummy_byte_zero[7:2];
     assign uio_out = 0;// dummy_byte_zero[7:1];
     assign uio_oe = 0;// dummy_byte_zero;

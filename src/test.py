@@ -4,6 +4,26 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
 
 segments = [ 63, 6, 91, 79, 102, 109, 124, 7, 127, 103 ]
+def get_parameters():
+    parameters = {}
+    with open("parameters.v", "r") as infile:
+        for line in infile.readlines():
+            if "parameter" not in line:
+                continue
+            line = line.replace("parameter", "").replace(";", "").split("=")
+            parameters[line[0].strip()] = int(line[1].strip())
+
+    return parameters
+
+@cocotb.test()
+async def test_beamformer(dut):
+    dut._log.info("Start")
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    dut._log.info("Reset")
+    dut.rst_n.value = 0
 
 @cocotb.test()
 async def test_7seg(dut):
@@ -46,3 +66,6 @@ async def test_7seg(dut):
         await ClockCycles(dut.clk, max_count)
         assert int(dut.segments.value) == segments[i % 10]
 
+
+if __name__ == "__main__":
+    print(get_parameters())
