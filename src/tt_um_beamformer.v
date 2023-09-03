@@ -10,24 +10,14 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
         output wire [NUMBER_OF_BITS-1:0] data_left_output;
         output wire [NUMBER_OF_BITS-1:0] data_right_output;
 
-    localparam [1:0]
-        wait_clk       = 2'b00,
-        samplig        = 2'b01,
-        not_sampling   = 2'b10,
-        edge_case      = 2'b11;
-
     reg [NUMBER_OF_BITS-1:0] data_left;
     reg [NUMBER_OF_BITS-1:0] data_right;
 
     assign data_left_output = data_left;
     assign data_right_output = data_right;
 
-    reg [1:0] state = not_sampling;
-    reg prev_ws = 0;
     reg [$clog2(NUMBER_OF_BITS):0] bit_counter = 0;
 
-    // TODO: Make simpler and way more stupid. 
-    /*
     always @(clk) begin
         if (bit_counter != NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
             if (bit_counter != 0) begin
@@ -42,46 +32,9 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
             bit_counter <= bit_counter + 1;
         end
     end
-    */
+
     always @(edge ws_clk) begin
         bit_counter <= 0;
-    end
-
-    always @(posedge clk) begin
-        if (reset) begin
-            prev_ws <= 0;
-            bit_counter <= 0;
-        end else begin
-            case (state) 
-                wait_clk: begin
-                    state <= samplig;
-                end
-                samplig: begin
-                    if (bit_counter == NUMBER_OF_BITS-1) begin
-                        state <= not_sampling;
-                        bit_counter <= 0;
-                    end else begin
-                        if (!ws) begin
-                            data_left <= data_left << 1;
-                            data_left[0] <= data_in;
-                        end 
-                        else begin 
-                            data_right <= data_right << 1;
-                            data_right[0] <= data_in;
-                        end
-                        bit_counter <= bit_counter + 1;
-                    end
-                end
-                not_sampling: begin
-                    if (ws != prev_ws) begin
-                        state <= wait_clk;
-                    end
-                end
-                edge_case: begin
-                    state <= not_sampling;
-                end
-            endcase
-        end
     end
 
 endmodule
@@ -134,15 +87,13 @@ module tt_um_beamformer (
 
     wire reset = ! rst_n;
 
-    // reg [7:0] dummy_byte_zero = 0;
-
     // Might want to set to Z?
     assign uo_out[7:2] = 0;// dummy_byte_zero[7:2];
     assign uio_out = 0;// dummy_byte_zero[7:1];
     assign uio_oe = 0;// dummy_byte_zero;
 
     wire ws_clk;
-    reg [4:0] ws_counter = 0;
+    reg [4:0] ws_counter;
     assign ws_clk = ws_counter[4];
     assign uo_out[1] = ws_clk;
 
