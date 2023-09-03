@@ -151,16 +151,16 @@ module tt_um_beamformer (
     
     wire [NUMBER_OF_CHANNELS * 2 - 1:0] buffer_data_output [NUMBER_OF_BITS-1:0];
 
-    for (genvar i = 0; i <= NUMBER_OF_CHANNELS * 2; i = i + 2) begin
+    for (genvar i = 0; i <= NUMBER_OF_CHANNELS; i = i + 1) begin
         complete_dual_buffer buffer_1 (
             .clk(clk),
             .ws(ws_clk),
             .data_in(ui_in[i]),
             .reset(reset),
-            .delay_index_l(read_index[i]),
-            .delay_index_r(read_index[i+1]),
-            .buffer_out_l(buffer_data_output[i]),
-            .buffer_out_r(buffer_data_output[i+1])
+            .delay_index_l(read_index[i*2]),
+            .delay_index_r(read_index[i*2+1]),
+            .buffer_out_l(buffer_data_output[i*2]),
+            .buffer_out_r(buffer_data_output[i*2+1])
         );    
     end
   
@@ -185,8 +185,8 @@ module tt_um_beamformer (
             write_counter <= 0;
         end else begin
             if (write_counter == 63) begin
-                for (int i=0; i < NUMBER_OF_BITS*2; i = i + 2) begin
-                    data_output <= data_output + buffer_data_output[i] + buffer_data_output[i+1];
+                for (int i=0; i <= NUMBER_OF_BITS; i = i + 1) begin
+                    data_output <= data_output + buffer_data_output[i*2] + buffer_data_output[i*2+1];
                 end
             end else begin
                 data_output <= data_output << 1;
