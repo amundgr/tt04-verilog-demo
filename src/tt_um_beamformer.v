@@ -147,21 +147,23 @@ module tt_um_beamformer (
     reg [15:0] data_output;
     assign uo_out[0] = data_output[NUMBER_OF_BITS-1];
 
-    wire [NUMBER_OF_BITS-1:0] data_output_1;
-    wire [NUMBER_OF_BITS-1:0] data_output_2;
-
     reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
+    
+    wire [NUMBER_OF_CHANNELS * 2 - 1:0] buffer_data_output [NUMBER_OF_BITS-1:0];
 
-    complete_dual_buffer buffer_1 (
-        .clk(clk),
-        .ws(ws_clk),
-        .data_in(ui_in[0]),
-        .reset(reset),
-        .delay_index_l(read_index[0]),
-        .delay_index_r(read_index[1]),
-        .buffer_out_l(data_output_1),
-        .buffer_out_r(data_output_2)
-    );    
+    for (genvar i = 0; i <= NUMBER_OF_CHANNELS * 2; i = i + 2) begin
+        complete_dual_buffer buffer_1 (
+            .clk(clk),
+            .ws(ws_clk),
+            .data_in(ui_in[i]),
+            .reset(reset),
+            .delay_index_l(read_index[i]),
+            .delay_index_r(read_index[i+1]),
+            .buffer_out_l(buffer_data_output[i]),
+            .buffer_out_r(buffer_data_output[i+1])
+        );    
+    end
+  
 
     // Use ws_clk to give potenisal MCU more time, still fast enough.
     always @ (posedge ws_clk) begin
@@ -183,7 +185,9 @@ module tt_um_beamformer (
             write_counter <= 0;
         end else begin
             if (write_counter == 63) begin
-                data_output <= data_output_1 + data_output_2;
+                for (i=0; i < NUMBER_OF_BITS*2; i = i + 2) begin
+                    data_output <= data_output + buffer_data_output[i] + buffer_data_output[i+1];
+                end
             end else begin
                 data_output <= data_output << 1;
             end
