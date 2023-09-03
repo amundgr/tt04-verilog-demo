@@ -61,8 +61,8 @@ module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index
     input wire reset;
     input wire [$clog2(BUFFER_SIZE)-1:0] delay_index_l;
     input wire [$clog2(BUFFER_SIZE)-1:0] delay_index_r;
-    output wire [NUMBER_OF_BITS-1:0] data_out_l;
-    output wire [NUMBER_OF_BITS-1:0] data_out_right;
+    output wire [NUMBER_OF_BITS-1:0] buffer_out_l;
+    output wire [NUMBER_OF_BITS-1:0] buffer_out_r;
 
     wire [NUMBER_OF_BITS-1:0] buffer_in_l;
     wire [NUMBER_OF_BITS-1:0] buffer_in_r;
