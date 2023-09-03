@@ -118,6 +118,9 @@ module tt_um_beamformer (
 
     reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
 
+    
+
+
     i2s_to_pcm test_design_i2s(
         .clk(clk),
         .ws(ws_clk),
@@ -154,12 +157,18 @@ module tt_um_beamformer (
         end
     end
 
+    reg [5:0] write_counter;
     // If triggered and clk is low, ws was trigger. Else clk was trigger
-    always @(posedge clk or negedge ws_clk) begin
-        if (!clk) begin
-            data_output <= data_output_1 + data_output_2;    
+    always @(posedge clk) begin
+        if (reset) begin
+            write_counter <= 0;
         end else begin
-            data_output <= data_output << 1;
+            if (write_counter == 63) begin
+                data_output <= data_output_1 + data_output_2;
+            end else begin
+                data_output <= data_output << 1;
+            end
+            write_counter <= write_counter + 1;
         end
     end
 
