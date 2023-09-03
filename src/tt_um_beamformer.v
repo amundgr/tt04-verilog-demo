@@ -155,7 +155,13 @@ module tt_um_beamformer (
     end
 
     always @ (posedge clk) begin
-        data_output <= data_output << 1;
+        if (reset) begin
+            for (int i = 0; i < 3; i = i + 1) begin
+                read_index[i] <= 0;
+            end
+        end else begin
+            data_output <= data_output << 1;
+        end
     end
 
 endmodule
