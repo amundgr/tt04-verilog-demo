@@ -77,14 +77,14 @@ module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index
     );
 
     channel_buffer channel_buffer_l(
-        .clk(ws),
+        .ws(ws),
         .data_in(buffer_in_l),
         .read_index(delay_index_l),
         .data_out(buffer_out_l)
     );
 
     channel_buffer channel_buffer_r(
-        .clk(ws),
+        .ws(ws),
         .data_in(buffer_in_r),
         .read_index(delay_index_r),
         .data_out(buffer_out_r)
