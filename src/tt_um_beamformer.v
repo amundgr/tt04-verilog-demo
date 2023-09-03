@@ -10,7 +10,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
         output reg [NUMBER_OF_BITS-1:0] data_left;
         output reg [NUMBER_OF_BITS-1:0] data_right;
 
-    reg [$clog2(NUMBER_OF_BITS):0] bit_counter;
+    reg [$clog2(NUMBER_OF_BITS)-1:0] bit_counter;
 
     always @(posedge clk) begin
         if (bit_counter != NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
@@ -40,7 +40,7 @@ endmodule
 module channel_buffer (clk, data_in, read_index, data_out);
 
     input wire clk;
-    input wire [$clog2(BUFFER_SIZE):0] read_index;
+    input wire [$clog2(BUFFER_SIZE)-1:0] read_index;
     input wire [NUMBER_OF_BITS-1:0] data_in;
     output wire [NUMBER_OF_BITS-1:0] data_out;
     
@@ -119,7 +119,7 @@ module tt_um_beamformer (
     wire [7:0] data_output_1;
     wire [7:0] data_output_2;
 
-    reg [$clog2(BUFFER_SIZE):0] read_index [2:0]; // Set hard to 3 as 8 is max
+    reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
 
     i2s_to_pcm test_design_i2s(
         .clk(clk),
