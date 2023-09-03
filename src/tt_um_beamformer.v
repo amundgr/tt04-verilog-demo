@@ -148,6 +148,10 @@ module tt_um_beamformer (
         read_index[delay_data_register_select] <= {read_index[delay_data_register_select][$clog2(BUFFER_SIZE)-2:0], delay_data}; //(read_index[delay_data_register_select] << 1 ) | delay_data;
     end
 
+    always @(negedge ws_clk) begin
+        data_output <= data_output_1 + data_output_2;
+    end
+
     always @ (posedge clk) begin
         if (reset) begin
             for (int i = 0; i < 3; i = i + 1) begin
