@@ -72,7 +72,7 @@ module tt_um_beamformer (
         # Probably safe to set all uio_oe to input (0=input)
         uio_in[2:0] - delay register enable inputs beamformer
         uio_in[3] - data input for delay registers
-        uio_in[4] - clock input for delay registers
+        uio_in[4] - write enable fro delay registers
 
         # Use same as provided clock to get data out
         uo_out[0] - data output from beamformer
@@ -100,12 +100,12 @@ module tt_um_beamformer (
     end
 
     wire delay_data;
-    wire delay_data_clock;
+    wire delay_write_enable;
     wire [2:0] delay_data_register_select;
 
     assign delay_data_register_select = uio_in[2:0];
     assign delay_data = uio_in[3];
-    assign delay_data_clock = uio_in[4];
+    assign delay_write_enable = uio_in[4];
 
     reg [7:0] data_output;
     assign uo_out[0] = data_output[7];
@@ -141,12 +141,14 @@ module tt_um_beamformer (
         .data_out(data_output_2)
     );
 
-    always @ (posedge delay_data_clock or posedge reset) begin
+    // Use ws_clk to give potenisal MCU more time, still fast enough.
+    always @ (posedge ws_clk) begin
         if (reset) begin
             for (int i = 0; i < 3; i = i + 1) begin
                 read_index[i] <= 0;
             end            
-        end else begin
+        end 
+        if (delay_write_enable) begin
             read_index[delay_data_register_select] <= read_index[delay_data_register_select] << 1;
             read_index[delay_data_register_select][0] <= delay_data;
         end
