@@ -138,7 +138,7 @@ module tt_um_beamformer (
 
     wire delay_data;
     wire delay_write_enable;
-    wire [2:0] delay_data_register_select;
+    wire [3:0] delay_data_register_select;
 
     assign delay_data_register_select = uio_in[3:0];
     assign delay_data = uio_in[4];
@@ -147,7 +147,7 @@ module tt_um_beamformer (
     reg [15:0] data_output;
     assign uo_out[0] = data_output[NUMBER_OF_BITS-1];
 
-    reg [$clog2(BUFFER_SIZE)-1:0] read_index [3:0]; // Set hard to 3 as 8 is max
+    reg [$clog2(BUFFER_SIZE)-1:0] read_index [NUMBER_OF_CHANNELS * 2 - 1:0]; // Set hard to 3 as 16 is max
     
     wire [NUMBER_OF_BITS-1:0] buffer_data_output [NUMBER_OF_CHANNELS * 2 - 1:0];
 
