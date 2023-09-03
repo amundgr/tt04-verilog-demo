@@ -7,8 +7,8 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
         input wire ws;
         input wire data_in;
         input wire reset;
-        output reg [NUMBER_OF_BITS-1:0] data_left_output;
-        output reg [NUMBER_OF_BITS-1:0] data_right_output;
+        output reg [NUMBER_OF_BITS-1:0] data_left;
+        output reg [NUMBER_OF_BITS-1:0] data_right;
 
     reg [$clog2(NUMBER_OF_BITS):0] bit_counter;
 
