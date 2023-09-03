@@ -149,7 +149,7 @@ module tt_um_beamformer (
 
     reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
     
-    wire [NUMBER_OF_CHANNELS * 2 - 1:0] buffer_data_output [NUMBER_OF_BITS-1:0];
+    wire [NUMBER_OF_BITS-1:0] buffer_data_output [NUMBER_OF_CHANNELS * 2 - 1:0];
 
     for (genvar i = 0; i < NUMBER_OF_CHANNELS; i = i + 1) begin
         complete_dual_buffer buffer_1 (
