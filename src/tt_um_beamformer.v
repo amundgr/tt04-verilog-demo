@@ -168,7 +168,7 @@ module tt_um_beamformer (
     // Use ws_clk to give potenisal MCU more time, still fast enough.
     always @ (posedge ws_clk) begin
         if (reset) begin
-            for (int i = 0; i < 4; i = i + 1) begin
+            for (int i = 0; i < NUMBER_OF_CHANNELS * 2; i = i + 1) begin
                 read_index[i] <= 0;
             end            
         end 
