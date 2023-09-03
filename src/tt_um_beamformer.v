@@ -12,26 +12,25 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
 
     reg [$clog2(NUMBER_OF_BITS)-1:0] bit_counter;
 
+    reg [4:0] bit_counter;
+
     always @(posedge clk) begin
-        if (bit_counter != NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
-            if (bit_counter != 0) begin
-                if (!ws) begin
-                    data_left <= data_left << 1;
-                    data_left[0] <= data_in;
-                end else begin 
-                    data_right <= data_right << 1;
-                    data_right[0] <= data_in;
+        if (reset) begin
+            bit_counter <= 0;
+        end else begin
+            if (bit_counter < NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
+                if (bit_counter != 0) begin
+                    if (!ws) begin
+                        data_left <= data_left << 1;
+                        data_left[0] <= data_in;
+                    end else begin 
+                        data_right <= data_right << 1;
+                        data_right[0] <= data_in;
+                    end
                 end
             end
             bit_counter <= bit_counter + 1;
         end
-    end
-    
-    always @(posedge ws) begin
-        bit_counter <= 0;
-    end
-    always @(negedge ws) begin
-        bit_counter <= 0;
     end
 
 endmodule
@@ -144,21 +143,21 @@ module tt_um_beamformer (
         .data_out(data_output_2)
     );
 
-    always @ (posedge delay_data_clock) begin
-        read_index[delay_data_register_select] <= read_index[delay_data_register_select] << 1
-        read_index[delay_data_register_select][0] <= delay_data;
-    end
-
-    
-    always @(negedge ws_clk) begin
-        data_output <= data_output_1 + data_output_2;
-    end
-
-    always @ (posedge clk) begin
+    always @ (posedge delay_data_clock or posedge reset) begin
         if (reset) begin
             for (int i = 0; i < 3; i = i + 1) begin
                 read_index[i] <= 0;
-            end
+            end            
+        end else begin
+            read_index[delay_data_register_select] <= read_index[delay_data_register_select] << 1;
+            read_index[delay_data_register_select][0] <= delay_data;
+        end
+    end
+
+    // If triggered and clk is low, ws was trigger. Else clk was trigger
+    always @(posedge clk or negedge ws_clk) begin
+        if (!clk) begin
+            data_output <= data_output_1 + data_output_2;    
         end else begin
             data_output <= data_output << 1;
         end
