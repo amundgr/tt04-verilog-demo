@@ -32,8 +32,11 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
             bit_counter <= bit_counter + 1;
         end
     end
-
-    always @(posedge ws or negedge ws) begin
+    
+    always @(posedge ws) begin
+        bit_counter <= 0;
+    end
+    always @(negedge ws) begin
         bit_counter <= 0;
     end
 
