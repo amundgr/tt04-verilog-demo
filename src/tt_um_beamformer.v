@@ -16,7 +16,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
     assign data_left_output = data_left;
     assign data_right_output = data_right;
 
-    reg [$clog2(NUMBER_OF_BITS):0] bit_counter = 0;
+    reg [$clog2(NUMBER_OF_BITS):0] bit_counter;
 
     always @(posedge clk) begin
         if (bit_counter != NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
