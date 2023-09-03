@@ -1,20 +1,14 @@
 `default_nettype none
 `include "parameters.v"
 
-module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
+module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
 
         input wire clk;
         input wire ws;
         input wire data_in;
         input wire reset;
-        output wire [NUMBER_OF_BITS-1:0] data_left_output;
-        output wire [NUMBER_OF_BITS-1:0] data_right_output;
-
-    reg [NUMBER_OF_BITS-1:0] data_left;
-    reg [NUMBER_OF_BITS-1:0] data_right;
-
-    assign data_left_output = data_left;
-    assign data_right_output = data_right;
+        output reg [NUMBER_OF_BITS-1:0] data_left_output;
+        output reg [NUMBER_OF_BITS-1:0] data_right_output;
 
     reg [$clog2(NUMBER_OF_BITS):0] bit_counter;
 
@@ -132,8 +126,8 @@ module tt_um_beamformer (
         .ws(ws_clk),
         .data_in(ui_in[0]),
         .reset(reset),
-        .data_left_output(data_left),
-        .data_right_output(data_right)
+        .data_left(data_left),
+        .data_right(data_right)
     );
 
     channel_buffer test_design_channel_buffer_1(
