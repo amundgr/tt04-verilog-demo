@@ -33,7 +33,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left_output, data_right_output);
         end
     end
 
-    always @(edge ws_clk) begin
+    always @(edge ws) begin
         bit_counter <= 0;
     end
 
