@@ -107,14 +107,14 @@ module tt_um_beamformer (
     assign delay_data = uio_in[3];
     assign delay_write_enable = uio_in[4];
 
-    reg [7:0] data_output;
-    assign uo_out[0] = data_output[7];
+    reg [15:0] data_output;
+    assign uo_out[0] = data_output[NUMBER_OF_BITS-1];
     
-    wire [7:0] data_left;
-    wire [7:0] data_right;
+    wire [NUMBER_OF_BITS-1:0] data_left;
+    wire [NUMBER_OF_BITS-1:0] data_right;
     
-    wire [7:0] data_output_1;
-    wire [7:0] data_output_2;
+    wire [NUMBER_OF_BITS-1:0] data_output_1;
+    wire [NUMBER_OF_BITS-1:0] data_output_2;
 
     reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
 
