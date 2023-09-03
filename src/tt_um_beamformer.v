@@ -34,9 +34,9 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
 endmodule
 
 
-module channel_buffer (clk, data_in, read_index, data_out);
+module channel_buffer (ws, data_in, read_index, data_out);
 
-    input wire clk;
+    input wire ws;
     input wire [$clog2(BUFFER_SIZE)-1:0] read_index;
     input wire [NUMBER_OF_BITS-1:0] data_in;
     output wire [NUMBER_OF_BITS-1:0] data_out;
@@ -45,7 +45,7 @@ module channel_buffer (clk, data_in, read_index, data_out);
 
     assign data_out = data[read_index];
 
-    always @(posedge clk) begin
+    always @(negedge ws) begin
         for (int i = BUFFER_SIZE-1; i > 0; i = i - 1) begin
             data[i] <= data[i-1];
         end
@@ -54,6 +54,43 @@ module channel_buffer (clk, data_in, read_index, data_out);
 
 endmodule
 
+module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index_r, buffer_out_l, buffer_out_right);
+    input wire clk;
+    input wire ws;
+    input wire data_in;
+    input wire reset;
+    input wire [$clog2(BUFFER_SIZE)-1:0] delay_index_l;
+    input wire [$clog2(BUFFER_SIZE)-1:0] delay_index_r;
+    output wire [NUMBER_OF_BITS-1:0] data_out_l;
+    output wire [NUMBER_OF_BITS-1:0] data_out_right;
+
+    wire [NUMBER_OF_BITS-1:0] buffer_in_l;
+    wire [NUMBER_OF_BITS-1:0] buffer_in_r;
+
+    i2s_to_pcm i2s_to_pcm_l(
+        .clk(clk),
+        .ws(ws),
+        .data_in(data_in),
+        .reset(reset),
+        .data_left(buffer_in_l),
+        .data_right(buffer_in_r)
+    );
+
+    channel_buffer channel_buffer_l(
+        .clk(ws),
+        .data_in(buffer_in_l),
+        .read_index(delay_index_l),
+        .data_out(data_out_l)
+    );
+
+    channel_buffer channel_buffer_r(
+        .clk(ws),
+        .data_in(buffer_in_r),
+        .read_index(delay_index_r),
+        .data_out(data_out_right)
+    );
+    
+endmodule
 
 module tt_um_beamformer (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
@@ -109,40 +146,22 @@ module tt_um_beamformer (
 
     reg [15:0] data_output;
     assign uo_out[0] = data_output[NUMBER_OF_BITS-1];
-    
-    wire [NUMBER_OF_BITS-1:0] data_left;
-    wire [NUMBER_OF_BITS-1:0] data_right;
-    
+
     wire [NUMBER_OF_BITS-1:0] data_output_1;
     wire [NUMBER_OF_BITS-1:0] data_output_2;
 
     reg [$clog2(BUFFER_SIZE)-1:0] read_index [2:0]; // Set hard to 3 as 8 is max
 
-    
-
-
-    i2s_to_pcm test_design_i2s(
+    complete_dual_buffer buffer_1 (
         .clk(clk),
         .ws(ws_clk),
         .data_in(ui_in[0]),
         .reset(reset),
-        .data_left(data_left),
-        .data_right(data_right)
-    );
-
-    channel_buffer test_design_channel_buffer_1(
-        .clk(ws_clk),
-        .data_in(data_left),
-        .read_index(read_index[0]),
-        .data_out(data_output_1)
-    );
-
-    channel_buffer test_design_channel_buffer_2(
-        .clk(ws_clk),
-        .data_in(data_right),
-        .read_index(read_index[1]),
-        .data_out(data_output_2)
-    );
+        .delay_index_l(read_index[0]),
+        .delay_index_r(read_index[1]),
+        .buffer_out_l(data_output_1),
+        .buffer_out_right(data_output_2)
+    );    
 
     // Use ws_clk to give potenisal MCU more time, still fast enough.
     always @ (posedge ws_clk) begin
