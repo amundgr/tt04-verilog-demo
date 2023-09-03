@@ -54,7 +54,7 @@ module channel_buffer (ws, data_in, read_index, data_out);
 
 endmodule
 
-module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index_r, buffer_out_l, buffer_out_right);
+module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index_r, buffer_out_l, buffer_out_r);
     input wire clk;
     input wire ws;
     input wire data_in;
@@ -80,14 +80,14 @@ module complete_dual_buffer (clk, ws, data_in, reset, delay_index_l, delay_index
         .clk(ws),
         .data_in(buffer_in_l),
         .read_index(delay_index_l),
-        .data_out(data_out_l)
+        .data_out(buffer_out_l)
     );
 
     channel_buffer channel_buffer_r(
         .clk(ws),
         .data_in(buffer_in_r),
         .read_index(delay_index_r),
-        .data_out(data_out_right)
+        .data_out(buffer_out_r)
     );
     
 endmodule
@@ -160,7 +160,7 @@ module tt_um_beamformer (
         .delay_index_l(read_index[0]),
         .delay_index_r(read_index[1]),
         .buffer_out_l(data_output_1),
-        .buffer_out_right(data_output_2)
+        .buffer_out_r(data_output_2)
     );    
 
     // Use ws_clk to give potenisal MCU more time, still fast enough.
