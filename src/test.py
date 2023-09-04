@@ -18,13 +18,30 @@ def get_parameters():
 @cocotb.test()
 async def test_beamformer(dut):
     dut._log.info("Start")
-    clock = Clock(dut.clk, 10, units="us")
+    clock = Clock(dut.clk, 1, units="us")
     cocotb.start_soon(clock.start())
 
     # Reset
     dut._log.info("Reset")
     dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 1)
+    dut.rst_n.value = 1
 
+    # Clock in zeros
+    dut.ui_in.value = 0
+    await ClockCycles(dut.clk, 64)
+
+    res = 0
+    for i in range(8):
+        res += (dut.uo_out & 1) << i
+        await ClockCycles(dut.clk, 1)
+
+    dut._log.info(f"Result: {res}")
+    assert res == 0
+
+
+
+"""
 @cocotb.test()
 async def test_7seg(dut):
     dut._log.info("start")
@@ -65,7 +82,7 @@ async def test_7seg(dut):
         dut._log.info("check segment {}".format(i))
         await ClockCycles(dut.clk, max_count)
         assert int(dut.segments.value) == segments[i % 10]
-
+"""
 
 if __name__ == "__main__":
     print(get_parameters())
