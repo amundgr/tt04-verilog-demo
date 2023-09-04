@@ -30,7 +30,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
             bit_counter <= bit_counter + 1;
         end
     end
-
+    
 endmodule
 
 
@@ -147,7 +147,7 @@ module tt_um_beamformer (
     reg [$clog2(NUMBER_OF_CHANNELS) + NUMBER_OF_BITS - 1 :0] data_output; // Might be worng?
     assign uo_out[0] = data_output[NUMBER_OF_BITS-1];
 
-    reg [$clog2(BUFFER_SIZE)-1:0] read_index [NUMBER_OF_CHANNELS * 2 - 1:0]; // Set hard to 3 as 16 is max
+    reg [$clog2(BUFFER_SIZE)-1:0] read_index [NUMBER_OF_CHANNELS * 2 - 1:0]; 
     
     wire [NUMBER_OF_BITS-1:0] buffer_data_output [NUMBER_OF_CHANNELS * 2 - 1:0];
 
