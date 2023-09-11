@@ -33,7 +33,7 @@ async def test_beamformer(dut):
 
     res = 0
     for i in range(8):
-        print(type(dut.uo_out.value))
+        dut._log.info(f"ASDASDASD: {type(dut.uo_out.value)}")
         tmp = dut.uo_out.value
         res += (tmp & 1) << i
         await ClockCycles(dut.clk, 1)
