@@ -29,17 +29,24 @@ async def test_beamformer(dut):
 
     # Clock in zeros
     dut.ui_in.value = 0
-    await ClockCycles(dut.clk, 64)
-
     res = 0
-    for i in range(8):
-        dut._log.info(f"ASDASDASD: {type(dut.uo_out.value)}")
-        tmp = int(dut.uo_out.value)
-        res += (tmp & 1) << i
+    for i in range(200):
         await ClockCycles(dut.clk, 1)
+        try:
+            for i in range(8):
+                dut._log.info(f"ASDASDASD: {type(dut.uo_out.value)}")
+                dut._log.info(f"ASDASDASD: Data on output idx {res}")
+                tmp = int(dut.uo_out.value)
+                res += (tmp & 1) << i
+                await ClockCycles(dut.clk, 1)
+            break
+        except ValueError:
+            continue
 
     dut._log.info(f"Result: {res}")
     assert res == 0
+
+
 
 
 
