@@ -10,7 +10,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
         output reg [NUMBER_OF_BITS-1:0] data_left;
         output reg [NUMBER_OF_BITS-1:0] data_right;
 
-    reg [4:0] bit_counter;
+    reg [3:0] bit_counter;
 
     always @(posedge clk) begin
         if (reset) begin
