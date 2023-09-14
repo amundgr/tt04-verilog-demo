@@ -32,7 +32,7 @@ async def test_beamformer(dut):
     res = 0
     any_data = False
     
-    dut.rst_n.value = 0
+    dut.ui_in.value = 0
     await ClockCycles(dut.clk, 32)
     dut.ui_in.value = 255
     await ClockCycles(dut.clk, 32)

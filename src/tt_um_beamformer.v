@@ -14,7 +14,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
 
     always @(posedge clk) begin
         if (reset) begin
-            bit_counter <= 1;
+            bit_counter <= 0;
         end else begin
             if (bit_counter < NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
                 if (bit_counter != 0) begin
@@ -27,8 +27,8 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
                     end
                 end
             end
-            bit_counter <= bit_counter + 1;
         end
+        bit_counter <= bit_counter + 1;
     end
     
 endmodule
