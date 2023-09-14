@@ -10,13 +10,13 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
         output reg [NUMBER_OF_BITS-1:0] data_left;
         output reg [NUMBER_OF_BITS-1:0] data_right;
 
-    reg [3:0] bit_counter;
+    reg [4:0] bit_counter;
 
     always @(posedge clk) begin
         if (reset) begin
             bit_counter <= 1;
         end else begin
-            if (bit_counter < NUMBER_OF_BITS+1+1) begin // + 1 because of the initial bit before data
+            if (bit_counter < NUMBER_OF_BITS+1) begin // + 1 because of the initial bit before data
                 if (bit_counter != 0) begin
                     if (!ws) begin
                         data_left <= data_left << 1;
@@ -124,8 +124,8 @@ module tt_um_beamformer (
     assign uio_oe = 0;// dummy_byte_zero;
 
     wire ws_clk;
-    reg [4:0] ws_counter;
-    assign ws_clk = ws_counter[4];
+    reg [5:0] ws_counter;
+    assign ws_clk = ws_counter[5];
     assign uo_out[1] = ws_clk;
 
     always @ (negedge clk) begin
