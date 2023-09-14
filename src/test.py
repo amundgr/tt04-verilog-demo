@@ -32,7 +32,8 @@ async def push_value(value_list, dut) -> None:
             for i in range(8):
                 val |= (value_list[i*2+1] & 0x80 >> 7) << i
                 value_list[i*2+1] << 1
-
+                
+        dut.ui_in.value = val
         await ClockCycles(dut.clk, 1)
 
 @cocotb.test()
