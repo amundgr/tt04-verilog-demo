@@ -15,6 +15,26 @@ def get_parameters():
 
     return parameters
 
+async def push_value(value_list: list[list[int]], dut) -> None:
+    # Take a 16 element list as input and shift each value parallel into dut.ui_in.value
+    
+    ws = True
+    for i in range(64):
+        val = 0
+        if i == 0 or i==32:
+            ws = not ws
+            continue
+        if not ws:
+            for i in range(8):
+                val |= (value_list[i*2] & 0x80 >> 7) << i
+                value_list[i*2] << 1 
+        else:
+            for i in range(8):
+                val |= (value_list[i*2+1] & 0x80 >> 7) << i
+                value_list[i*2+1] << 1
+
+        await ClockCycles(dut.clk, 1)
+
 @cocotb.test()
 async def test_beamformer(dut):
     dut._log.info("Start")
@@ -32,15 +52,20 @@ async def test_beamformer(dut):
     res = 0
     any_data = False
     
-    dut.ui_in.value = 0
-    await ClockCycles(dut.clk, 32)
-    dut.ui_in.value = 255
-    await ClockCycles(dut.clk, 32)
-    dut.ui_in.value = 0
-    await ClockCycles(dut.clk, 32)
-    dut.ui_in.value = 255
-    await ClockCycles(dut.clk, 32)
-    dut.ui_in.value = 0
+    vals = [0] * 16
+    vals[0] = 0x12
+    vals[1] = 0x34
+    vals[2] = 0x56
+    vals[3] = 0x78
+
+    await push_value(vals, dut)
+
+    vals[0] = 0x9A
+    vals[1] = 0xBC
+    vals[2] = 0xDE
+    vals[3] = 0xF0
+
+    await push_value(vals, dut)
 
     dut._log.info(f"Result: {res}")
     assert any_data
