@@ -15,7 +15,7 @@ def get_parameters():
 
     return parameters
 
-async def push_value(value_list: list[list[int]], dut) -> None:
+async def push_value(value_list, dut) -> None:
     # Take a 16 element list as input and shift each value parallel into dut.ui_in.value
     
     ws = True
