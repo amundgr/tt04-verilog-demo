@@ -17,7 +17,7 @@ module i2s_to_pcm(clk, ws, data_in, reset, data_left, data_right);
             bit_counter <= 1;
         end else begin
             if (bit_counter < NUMBER_OF_BITS+1+1) begin // + 1 because of the initial bit before data
-                if (bit_counter != 1) begin
+                if (bit_counter != 0) begin
                     if (!ws) begin
                         data_left <= data_left << 1;
                         data_left[0] <= data_in;
