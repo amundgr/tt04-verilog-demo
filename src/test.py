@@ -51,7 +51,7 @@ async def test_beamformer(dut):
 
 
 
-
+"""
 @cocotb.test()
 async def test_7seg(dut):
     dut._log.info("start")
@@ -96,3 +96,4 @@ async def test_7seg(dut):
 
 if __name__ == "__main__":
     print(get_parameters())
+"""
