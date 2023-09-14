@@ -25,7 +25,7 @@ async def test_beamformer(dut):
     dut._log.info("Reset")
     dut.rst_n.value = 0
     dut.ui_in.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 1)
     dut.rst_n.value = 1
 
     # Clock in zeros
@@ -33,17 +33,6 @@ async def test_beamformer(dut):
     any_data = False
     for __ in range(200):
         await ClockCycles(dut.clk, 1)
-        try:
-            for i in range(8):
-                tmp = int(dut.uo_out.value)
-                dut._log.info(f"ASDASDASD: Data on output idx {i}")
-                any_data = True
-                res += (tmp & 1) << i
-                await ClockCycles(dut.clk, 1)
-            break
-        except ValueError:
-            continue
-
     dut._log.info(f"Result: {res}")
     assert any_data
 
@@ -92,8 +81,8 @@ async def test_7seg(dut):
         dut._log.info("check segment {}".format(i))
         await ClockCycles(dut.clk, max_count)
         assert int(dut.segments.value) == segments[i % 10]
+"""
 
 
 if __name__ == "__main__":
     print(get_parameters())
-"""
