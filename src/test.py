@@ -31,8 +31,17 @@ async def test_beamformer(dut):
     # Clock in zeros
     res = 0
     any_data = False
-    for __ in range(200):
-        await ClockCycles(dut.clk, 1)
+    
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 32)
+    dut.ui_in.value = 255
+    await ClockCycles(dut.clk, 32)
+    dut.ui_in.value = 0
+    await ClockCycles(dut.clk, 32)
+    dut.ui_in.value = 255
+    await ClockCycles(dut.clk, 32)
+    dut.ui_in.value = 0
+
     dut._log.info(f"Result: {res}")
     assert any_data
 
